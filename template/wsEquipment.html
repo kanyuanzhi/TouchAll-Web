@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="text/javascript">
+    // let wsServer = "ws://127.0.0.1:9091/ws";
+    let wsServer = "ws://10.211.55.10:9091/ws";
+    for 10{
+        let webdo =
+    }
+
+    let websocket = new WebSocket(wsServer);
+    let requestMessage = JSON.stringify({"request_type": 31, "equipment_id": 1})
+    websocket.onopen = function (evt) {
+        websocket.send(requestMessage)
+        console.log("Connected to WebSocket server.");
+    };
+
+    websocket.onclose = function (evt) {
+        console.log("Disconnected");
+    };
+    // setInterval(function () {
+    //    websocket.send("websocket i am client" + Math.floor(Math.random() * 10000))
+    // }, 5000);
+    websocket.onmessage = function (evt) {
+        console.log(JSON.parse(evt.data));
+    };
+    websocket.onerror = function (evt, e) {
+        console.log('Error occured: ' + evt.data);
+    };
+
+</script>
+
+</body>
+</html>

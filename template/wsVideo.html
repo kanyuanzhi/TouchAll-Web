@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>视频客户端</title>
+    <script src="static/js/jquery.min.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+<body>
+
+<div><img src="" id="img" alt=""></div>
+
+<script type="text/javascript">
+    let wsServer = "ws://127.0.0.1:9081/ws";
+    let websocket = new WebSocket(wsServer);
+    let requestMessage = JSON.stringify({"camera": 1})
+    websocket.onopen = function (evt) {
+        websocket.send(requestMessage)
+        console.log("Connected to WebSocket server.");
+    };
+
+    websocket.onclose = function (evt) {
+        console.log("Disconnected");
+    };
+
+    websocket.onmessage = function (evt) {
+        let msg = evt.data
+        console.log(typeof (msg));
+        // document.getElementById("img").src = "data:image/jpeg;base64," + msg
+        blobToDataUrl(msg, function (result) {
+            // document.getElementById("img").src = "data:image/jpeg;base64," + result
+            document.getElementById("img").src = result
+            // console.log(result)
+        })
+    };
+    websocket.onerror = function (evt, e) {
+        console.log('Error occured: ' + evt.data);
+    };
+
+    function blobToDataUrl(blob, callback) {
+        let reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onload = function (e) {
+            callback(e.target.result);
+        }
+    }
+
+</script>
+
+</body>
+</html>
