@@ -1,14 +1,29 @@
 package main
 
 import (
+	"fmt"
+	"ginWeb/dbDrivers"
+	"ginWeb/models"
+	"ginWeb/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"net/http"
 )
 
+//var useMongodb = config.GetValue("mongodb.use").(bool)
+//var useMysql = config.GetValue("mysql.use").(bool)
+
+var mysqlConn = dbDrivers.GetMysqlConn()
+
 func main() {
+	config := utils.NewConfig()
+	port := config.GetValue("web_server.port").(string)
+	//useMongodb := config.GetValue("mongodb.use").(bool)
+	//useMysql := config.GetValue("mysql.use").(bool)
+
 	r := gin.Default()
 	r.LoadHTMLGlob("template/*")
-	r.Static("/static","./static")
+	r.Static("/static", "./static")
 
 	r.GET("/main", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "video.html", gin.H{})
@@ -37,5 +52,53 @@ func main() {
 	r.GET("/wsVideo", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "wsVideo.html", gin.H{})
 	})
-	r.Run(":8081")
+
+	r.GET("/registerEquipment", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "equipmentRegistration.html", gin.H{})
+
+	})
+
+	r.POST("/postEquipmentRegistrationForm", func(c *gin.Context) {
+		var registrationForm models.EquipmentRegistrationForm
+		c.ShouldBindWith(&registrationForm, binding.Form)
+		if registrationForm.EquipmentID == 0 {
+			c.JSON(200, gin.H{
+				"success": false,
+				"message": "设备ID不能为空！",
+			})
+		} else if registrationForm.NetworkMac1 == "" && registrationForm.NetworkMac2 == "" {
+			c.JSON(200, gin.H{
+				"success": false,
+				"message": "设备网卡不能为空！",
+			})
+		} else if utils.IsEquipmentIDExisted(&registrationForm, mysqlConn) {
+			c.JSON(200, gin.H{
+				"success": false,
+				"message": "设备ID重复，请使用其他ID！",
+			})
+		} else {
+			success, registeredEquipment := utils.InsertEquipmentRegistration(&registrationForm, mysqlConn)
+			if success {
+				if registeredEquipment != nil {
+					message := fmt.Sprintf("设备已经存在，%i ，如需修改请转至修改界面！", registrationForm.EquipmentID)
+					c.JSON(200, gin.H{
+						"success": false,
+						"message": message,
+					})
+				} else {
+					c.JSON(200, gin.H{
+						"success": true,
+						"message": "设备注册成功！",
+					})
+				}
+			} else {
+				c.JSON(200, gin.H{
+					"success": false,
+					"message": "设备注册失败！ ",
+				})
+			}
+		}
+	})
+
+	r.Run(":" + port)
 }
