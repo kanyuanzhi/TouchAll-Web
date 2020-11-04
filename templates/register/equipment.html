@@ -1,3 +1,4 @@
+{{ define "register/equipment.html" }}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,7 +47,7 @@
     function send(){
         $.ajax({
             type:"post",
-            url:"/postEquipmentRegistrationForm",
+            url:"/register/equipment/form",
             data:$("#equipmentRegisteredForm").serialize(),
             success:function (res){
                 alert(res.message)
@@ -59,3 +60,4 @@
 </script>
 </body>
 </html>
+{{ end }}
