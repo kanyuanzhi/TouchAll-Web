@@ -11,7 +11,7 @@ type Config struct {
 
 func NewConfig() *Config {
 	cviper := viper.New()
-	cviper.SetConfigName("ginWebConfig")
+	cviper.SetConfigName("webConfig")
 	cviper.AddConfigPath("./")
 	cviper.SetConfigType("json")
 	err := cviper.ReadInConfig()
