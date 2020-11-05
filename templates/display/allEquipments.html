@@ -1,0 +1,93 @@
+{{ define "display/allEquipments.html" }}
+    {{template "layout/header" .}}
+
+    <body>
+
+    <table class="table table-striped">
+        <thead style="font-size:3px">
+        <tr>
+                        <td>设备ID</td>
+            <td>运行时长（s）</td>
+            <td width="15%">CPU使用率</td>
+            <td>CPU平均使用率</td>
+            <td>磁盘可用大小（GB）</td>
+            <td>内存使用率</td>
+            <td>内存可用大小（GB）</td>
+            <td>网络丢包数（进）</td>
+            <td>网络丢包数（出）</td>
+            <td>网络发送流量（GB）</td>
+            <td>网络接收流量（GB）</td>
+            <td>数据更新时间</td>
+        </tr>
+        </thead>
+        <tbody style="font-size:3px">
+        {{range .equipments}}
+            <tr id="{{.EquipmentID}}" class="status">
+                <td id="equipment_id">{{.EquipmentID}}</td>
+                <td id="running_time">--</td>
+                <td id="cpu_per_utilization">--</td>
+                <td id="cpu_average_utilization">--</td>
+                <td id="disk_available">--</td>
+                <td id="memory_utilization">--</td>
+                <td id="memory_available">--</td>
+                <td id="network_drop_in">--</td>
+                <td id="network_drop_out">--</td>
+                <td id="network_send_gigabytes">--</td>
+                <td id="network_receive_gigabytes">--</td>
+                <td id="updated_at">--</td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+    <script type="text/javascript">
+        let wsServer = "ws://127.0.0.1:9091/ws";
+        // let wsServer = "ws://10.211.55.10:9091/ws";
+        // let wsServer = "ws://119.28.16.179:9091/ws";
+        {{range .equipments}}
+            startWebsocket({{.EquipmentID}})
+        {{end}}
+
+        function startWebsocket(equipmentID) {
+            let websocket = new WebSocket(wsServer);
+            let requestMessage = JSON.stringify({"request_type": 31, "equipment_id": equipmentID})
+            websocket.onopen = function (evt) {
+                websocket.send(requestMessage)
+                console.log("Connected to WebSocket server.");
+            };
+
+            websocket.onclose = function (evt) {
+                console.log("Disconnected");
+            };
+
+            websocket.onmessage = function (evt) {
+                equipmentStatus = JSON.parse(evt.data)
+                $.each($("#" + equipmentID).children(), function (key, value) {
+                    if (key==0){
+                        return
+                    }
+                    if (value.id.indexOf("cpu") >= 0) {
+                        $(value).text(equipmentStatus["cpu"][value.id])
+                    } else if (value.id.indexOf("disk") >= 0) {
+                        $(value).text(equipmentStatus["disk"][value.id])
+                    } else if (value.id.indexOf("memory") >= 0) {
+                        $(value).text(equipmentStatus["memory"][value.id])
+                    } else if (value.id.indexOf("network") >= 0) {
+                        $(value).text(equipmentStatus["network"][value.id])
+                    } else if (value.id == "running_time") {
+                        $(value).text(equipmentStatus[value.id])
+                    } else {
+                        $(value).text(equipmentStatus[value.id])
+                    }
+
+                })
+            };
+            websocket.onerror = function (evt, e) {
+                console.log('Error occured: ' + evt.data);
+            };
+        }
+
+
+    </script>
+    </body>
+    </html>
+{{ end }}

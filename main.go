@@ -1,16 +1,15 @@
 package main
 
 import (
-	"TouchAll-web/dbDrivers"
 	"TouchAll-web/routers"
 )
 
 //var useMongodb = config.GetValue("mongodb.use").(bool)
 //var useMysql = config.GetValue("mysql.use").(bool)
 
-var mysqlConn = dbDrivers.GetMysqlConn()
 
 func main() {
+
 	router := routers.NewRouter()
 
 	router.Start()

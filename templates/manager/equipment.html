@@ -1,0 +1,71 @@
+{{ define "manager/equipment.html" }}
+    {{template "layout/header" .}}
+
+    <body>
+        <table class="table table-striped">
+            <thead style="font-size:3px">
+            <tr>
+                <td>设备ID</td>
+                <td>类型</td>
+                <td>mac地址1</td>
+                <td>mac地址2</td>
+                <td>ip地址1</td>
+                <td>ip地址2</td>
+                <td>网卡1</td>
+                <td>网卡2</td>
+                <td>描述信息</td>
+
+{{/*                <td>操作系统</td>*/}}
+                <td>网络名称</td>
+                <td>系统版本</td>
+{{/*                <td>架构</td>*/}}
+                <td>当前登录用户</td>
+                <td>主机地址</td>
+{{/*                <td>CPU型号</td>*/}}
+                <td>CPU核心数</td>
+                <td>磁盘大小</td>
+                <td>内存大小</td>
+
+                <td>启动时间</td>
+                <td>注册时间</td>
+                <td>更新时间</td>
+            </tr>
+            </thead>
+            <tbody style="font-size:3px">
+            {{range .equipments}}
+                <tr>
+                    <td><a href="/display/equipment?equipmentID={{.EquipmentID}}">{{.EquipmentID}}</a></td>
+                    <td>{{.EquipmentType}}</td>
+                    <td>{{.NetworkMac1}}</td>
+                    <td>{{.NetworkMac2}}</td>
+                    <td>{{.NetworkIP1}}</td>
+                    <td>{{.NetworkIP2}}</td>
+                    <td>{{.NetworkCard1}}</td>
+                    <td>{{.NetworkCard2}}</td>
+                    <td>{{.Description}}</td>
+
+
+{{/*                    <td>{{.OperateSystem}}</td>*/}}
+                    <td>{{.NetworkName}}</td>
+                    <td>{{.Platform}}</td>
+{{/*                    <td>{{.Architecture}}</td>*/}}
+                    <td>{{.User}}</td>
+                    <td>{{.Host}}</td>
+{{/*                    <td>{{.Processor}}</td>*/}}
+                    <td>{{.CPUCount}}</td>
+                    <td>{{.DiskSize}}</td>
+                    <td>{{.MemorySize}}</td>
+
+                    <td>{{.BootTime}}</td>
+                    <td>{{.CreatedAt}}</td>
+                    <td>{{.UpdatedAt}}</td>
+                </tr>
+            {{end}}
+            </tbody>
+        </table>
+    <script>
+
+    </script>
+    </body>
+    </html>
+{{ end }}

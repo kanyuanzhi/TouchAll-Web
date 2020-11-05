@@ -1,63 +1,58 @@
 {{ define "register/equipment.html" }}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="static/css/bootstrap.min.css">
-    <script src="static/js/jquery.min.js"></script>
-    <script src="static/js/popper.min.js"></script>
-    <script src="static/js/bootstrap.min.js"></script>
-</head>
-<body>
-<div class="container-md">
-    <div class="col-md-3"></div>
-    <div class="col-md-6">
-        <form id="equipmentRegisteredForm">
-            <div class="form-group">
-                <label for="equipment_id">equipment_id</label>
-                <input type="number" class="form-control" id="equipment_id" name="equipment_id">
-            </div>
-            <div class="form-group">
-                <label for="network_mac_1">network_mac_1</label>
-                <input type="text" class="form-control" id="network_mac_1" name="network_mac_1">
-            </div>
-            <div class="form-group">
-                <label for="network_mac_2">network_mac_2</label>
-                <input type="text" class="form-control" id="network_mac_2" name="network_mac_2">
-            </div>
-            <div class="form-group">
-                <label for="network_card_1">network_card_1</label>
-                <input type="text" class="form-control" id="network_card_1" name="network_card_1">
-            </div>
-            <div class="form-group">
-                <label for="network_card_2">network_card_2</label>
-                <input type="text" class="form-control" id="network_card_2" name="network_card_2">
-            </div>
-            <div class="form-group">
-                <label for="description">description</label>
-                <input type="text" class="form-control" id="description" name="description">
-            </div>
-            <button type="button" class="btn btn-primary" id="button" onclick="send();">Submit</button>
-        </form>
+    {{template "layout/header" .}}
+    <body>
+    <div class="container-md">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <form id="equipmentRegisteredForm">
+                <div class="form-group">
+                    <label for="equipment_id">设备ID</label>
+                    <input type="number" class="form-control" id="equipment_id" name="equipment_id">
+                </div>
+                <div class="form-group">
+                    <label for="equipment_type">设备类型</label>
+                    <input type="number" class="form-control" id="equipment_type" name="equipment_type">
+                </div>
+                <div class="form-group">
+                    <label for="network_mac_1">mac地址1</label>
+                    <input type="text" class="form-control" id="network_mac_1" name="network_mac_1">
+                </div>
+                <div class="form-group">
+                    <label for="network_mac_2">mac地址2</label>
+                    <input type="text" class="form-control" id="network_mac_2" name="network_mac_2">
+                </div>
+                <div class="form-group">
+                    <label for="network_card_1">网卡1</label>
+                    <input type="text" class="form-control" id="network_card_1" name="network_card_1">
+                </div>
+                <div class="form-group">
+                    <label for="network_card_2">网卡2</label>
+                    <input type="text" class="form-control" id="network_card_2" name="network_card_2">
+                </div>
+                <div class="form-group">
+                    <label for="description">描述信息</label>
+                    <input type="text" class="form-control" id="description" name="description">
+                </div>
+                <button type="button" class="btn btn-primary" id="button" onclick="send();">Submit</button>
+            </form>
+        </div>
+        <div class="col-md-3"></div>
     </div>
-    <div class="col-md-3"></div>
-</div>
-<script>
-    function send(){
-        $.ajax({
-            type:"post",
-            url:"/register/equipment/form",
-            data:$("#equipmentRegisteredForm").serialize(),
-            success:function (res){
-                alert(res.message)
-            },
-            error:function (err){
-                alert(err)
-            }
-        })
-    }
-</script>
-</body>
-</html>
+    <script>
+        function send() {
+            $.ajax({
+                type: "post",
+                url: "/register/equipment/form",
+                data: $("#equipmentRegisteredForm").serialize(),
+                success: function (res) {
+                    alert(res.message)
+                },
+                error: function (err) {
+                    alert(err)
+                }
+            })
+        }
+    </script>
+    </body>
+    </html>
 {{ end }}

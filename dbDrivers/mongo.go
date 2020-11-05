@@ -1,7 +1,7 @@
 package dbDrivers
 
 import (
-	"TouchAll-web/utils"
+	config2 "TouchAll-web/config"
 	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -15,7 +15,7 @@ func GetMongodbConn() *mongo.Database {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	config := utils.NewConfig()
+	config := config2.NewConfig()
 	username, password, host, port, database := config.GetMongodbConfig()
 	url := fmt.Sprintf("mongodb://%s:%s@%s:%s", username, password, host, port)
 	opt := options.Client().ApplyURI(url)
