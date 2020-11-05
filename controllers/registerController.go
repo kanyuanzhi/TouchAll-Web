@@ -15,6 +15,11 @@ func EquipmentRegister(c *gin.Context) {
 			"success": false,
 			"message": "设备ID不能为空！",
 		})
+	} else if equipment.EquipmentType == 0 {
+		c.JSON(200, gin.H{
+			"success": false,
+			"message": "设备类型不能为空！",
+		})
 	} else if equipment.NetworkMac1 == "" && equipment.NetworkMac2 == "" {
 		c.JSON(200, gin.H{
 			"success": false,
@@ -39,6 +44,37 @@ func EquipmentRegister(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"success": false,
 			"message": "设备注册失败！ ",
+		})
+	}
+}
+
+func EquipmentTypeRegister(c *gin.Context) {
+	var equipmentType models.EquipmentType
+	c.ShouldBindWith(&equipmentType, binding.Form)
+	if equipmentType.TypeID == 0 {
+		c.JSON(200, gin.H{
+			"success": false,
+			"message": "设备类型编号不能为空或0！",
+		})
+	} else if equipmentType.TypeName == "" {
+		c.JSON(200, gin.H{
+			"success": false,
+			"message": "设备类型名称不能为空！",
+		})
+	} else if utils.IsEquipmentTypeExisted(equipmentType.TypeID, equipmentType.TypeName) {
+		c.JSON(200, gin.H{
+			"success": false,
+			"message": "该设备类型编号或名称已注册，请转至设备管理页面查看！",
+		})
+	} else if utils.InsertEquipmentType(equipmentType) {
+		c.JSON(200, gin.H{
+			"success": true,
+			"message": "设备类型注册成功！",
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"success": false,
+			"message": "设备类型注册失败！ ",
 		})
 	}
 }

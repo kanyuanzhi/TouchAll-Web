@@ -59,7 +59,7 @@
         <thead style="font-size:3px">
         <tr>
             {{/*            <td>设备ID</td>*/}}
-            <td>运行时长（s）</td>
+            <td>运行时长</td>
             <td width="15%">CPU使用率</td>
             <td>CPU平均使用率</td>
 {{/*            <td>磁盘使用大小（GB）</td>*/}}
@@ -91,9 +91,9 @@
         </tbody>
     </table>
     <script type="text/javascript">
-        let wsServer = "ws://127.0.0.1:9091/ws";
+        // let wsServer = "ws://127.0.0.1:9091/ws";
         // let wsServer = "ws://10.211.55.10:9091/ws";
-        // let wsServer = "ws://119.28.16.179:9091/ws";
+        let wsServer = "ws://119.28.16.179:9091/ws";
         let websocket = new WebSocket(wsServer);
         let requestMessage = JSON.stringify({"request_type": 31, "equipment_id": {{.equipment.EquipmentID}}})
         websocket.onopen = function (evt) {
@@ -120,7 +120,7 @@
                 }else if(value.id.indexOf("network")>=0){
                     $(value).text(equipmentStatus["network"][value.id])
                 }else if(value.id == "running_time"){
-                    $(value).text(equipmentStatus[value.id])
+                    $(value).text(sec2DayHourMinSec(equipmentStatus[value.id]))
                 }else {
                     $(value).text(equipmentStatus[value.id])
                 }

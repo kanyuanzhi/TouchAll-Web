@@ -40,7 +40,8 @@ func IsEquipmentNetworkMacExisted(mac1 string, mac2 string) bool {
 
 func InsertEquipment(equipment models.Equipment) bool {
 	equipment.Authenticated = 1
-	result := db.Create(&equipment)
+	result := db.Select("EquipmentID", "EquipmentType", "NetworkMac1", "NetworkMac2",
+		"NetworkCard1", "NetworkCard2", "Description", "Description", "Authenticated").Create(&equipment)
 	if result.Error != nil {
 		panic(result.Error.Error())
 		return false
@@ -90,9 +91,9 @@ func FindAllEquipmentIDs() []models.Equipment {
 	return equipments
 }
 
-func FindEquipmentTypes()[]models.EquipmentType{
+func FindEquipmentTypes() []models.EquipmentType {
 	var equipmentTypes []models.EquipmentType
-	result := db.Select("type_id","type_name","description").Find(&equipmentTypes)
+	result := db.Select("type_id", "type_name", "description").Find(&equipmentTypes)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil
@@ -102,4 +103,27 @@ func FindEquipmentTypes()[]models.EquipmentType{
 		}
 	}
 	return equipmentTypes
+}
+
+func IsEquipmentTypeExisted(id int, name string) bool {
+	var equipmentType models.EquipmentType
+	result := db.Select("id").Where("type_id=?", id).Or("type_name=?", name).First(&equipmentType)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return false
+		} else {
+			panic(result.Error.Error())
+			return false
+		}
+	}
+	return true
+}
+
+func InsertEquipmentType(equipmentType models.EquipmentType) bool {
+	result := db.Create(&equipmentType)
+	if result.Error != nil {
+		panic(result.Error.Error())
+		return false
+	}
+	return true
 }

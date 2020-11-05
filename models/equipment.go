@@ -34,7 +34,7 @@ type Equipment struct {
 
 type EquipmentType struct {
 	gorm.Model
-	TypeID      int
-	TypeName    string
-	Description string
+	TypeID      int    `form:"type_id" gorm:"primaryKey;autoIncrement:false"`
+	TypeName    string `form:"type_name"`
+	Description string `form:"description"`
 }

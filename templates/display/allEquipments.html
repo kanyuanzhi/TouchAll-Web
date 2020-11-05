@@ -6,8 +6,8 @@
     <table class="table table-striped">
         <thead style="font-size:3px">
         <tr>
-                        <td>设备ID</td>
-            <td>运行时长（s）</td>
+            <td>设备ID</td>
+            <td>运行时长</td>
             <td width="15%">CPU使用率</td>
             <td>CPU平均使用率</td>
             <td>磁盘可用大小（GB）</td>
@@ -40,11 +40,11 @@
         </tbody>
     </table>
     <script type="text/javascript">
-        let wsServer = "ws://127.0.0.1:9091/ws";
+        // let wsServer = "ws://127.0.0.1:9091/ws";
         // let wsServer = "ws://10.211.55.10:9091/ws";
-        // let wsServer = "ws://119.28.16.179:9091/ws";
+        let wsServer = "ws://119.28.16.179:9091/ws";
         {{range .equipments}}
-            startWebsocket({{.EquipmentID}})
+        startWebsocket({{.EquipmentID}})
         {{end}}
 
         function startWebsocket(equipmentID) {
@@ -62,7 +62,7 @@
             websocket.onmessage = function (evt) {
                 equipmentStatus = JSON.parse(evt.data)
                 $.each($("#" + equipmentID).children(), function (key, value) {
-                    if (key==0){
+                    if (key == 0) {
                         return
                     }
                     if (value.id.indexOf("cpu") >= 0) {
@@ -74,7 +74,9 @@
                     } else if (value.id.indexOf("network") >= 0) {
                         $(value).text(equipmentStatus["network"][value.id])
                     } else if (value.id == "running_time") {
-                        $(value).text(equipmentStatus[value.id])
+                        $(value).text(sec2DayHourMinSec(equipmentStatus[value.id]))
+                    } else if(value.id == "updated_at"){
+                        $(value).text(timestamp2datetime(equipmentStatus[value.id]*1000))
                     } else {
                         $(value).text(equipmentStatus[value.id])
                     }
@@ -85,7 +87,6 @@
                 console.log('Error occured: ' + evt.data);
             };
         }
-
 
     </script>
     </body>
