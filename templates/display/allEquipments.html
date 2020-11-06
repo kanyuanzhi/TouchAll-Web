@@ -22,7 +22,7 @@
         </thead>
         <tbody style="font-size:3px">
         {{range .equipments}}
-            <tr id="{{.EquipmentID}}" class="status">
+            <tr id="{{.EquipmentID}}">
                 <td id="equipment_id">{{.EquipmentID}}</td>
                 <td id="running_time">--</td>
                 <td id="cpu_per_utilization">--</td>
@@ -40,16 +40,14 @@
         </tbody>
     </table>
     <script type="text/javascript">
-        // let wsServer = "ws://127.0.0.1:9091/ws";
+        let wsServer = "ws://127.0.0.1:9091/ws";
         // let wsServer = "ws://10.211.55.10:9091/ws";
-        let wsServer = "ws://119.28.16.179:9091/ws";
-        {{range .equipments}}
-        startWebsocket({{.EquipmentID}})
-        {{end}}
+        // let wsServer = "ws://119.28.16.179:9091/ws";
+        startWebsocket();
 
-        function startWebsocket(equipmentID) {
+        function startWebsocket() {
             let websocket = new WebSocket(wsServer);
-            let requestMessage = JSON.stringify({"request_type": 31, "equipment_id": equipmentID})
+            let requestMessage = JSON.stringify({"request_type": 33, "equipment_ids": {{.equipment_ids}}})
             websocket.onopen = function (evt) {
                 websocket.send(requestMessage)
                 console.log("Connected to WebSocket server.");
@@ -60,28 +58,39 @@
             };
 
             websocket.onmessage = function (evt) {
-                equipmentStatus = JSON.parse(evt.data)
-                $.each($("#" + equipmentID).children(), function (key, value) {
-                    if (key == 0) {
-                        return
+                let equipmentStatusStream = JSON.parse(evt.data)
+                if (equipmentStatusStream["data_type"] === 0) {
+                    if (equipmentStatusStream["success"]) {
+                        console.log("webSocket连接成功");
                     }
-                    if (value.id.indexOf("cpu") >= 0) {
-                        $(value).text(equipmentStatus["cpu"][value.id])
-                    } else if (value.id.indexOf("disk") >= 0) {
-                        $(value).text(equipmentStatus["disk"][value.id])
-                    } else if (value.id.indexOf("memory") >= 0) {
-                        $(value).text(equipmentStatus["memory"][value.id])
-                    } else if (value.id.indexOf("network") >= 0) {
-                        $(value).text(equipmentStatus["network"][value.id])
-                    } else if (value.id == "running_time") {
-                        $(value).text(sec2DayHourMinSec(equipmentStatus[value.id]))
-                    } else if(value.id == "updated_at"){
-                        $(value).text(timestamp2datetime(equipmentStatus[value.id]*1000))
-                    } else {
-                        $(value).text(equipmentStatus[value.id])
+                } else {
+                    let equipmentIDs = {{.equipment_ids}};
+                    for (let i = 0; i < equipmentIDs.length; i++) {
+                        let equipmentStatus = equipmentStatusStream["status_stream"][equipmentIDs[i]];
+                        if (equipmentStatus != undefined) {
+                            $.each($("#" + equipmentIDs[i]).children(), function (key, value) {
+                                if (key === 0) {
+                                    return
+                                }
+                                if (value.id.indexOf("cpu") >= 0) {
+                                    $(value).text(equipmentStatus["cpu"][value.id]);
+                                } else if (value.id.indexOf("disk") >= 0) {
+                                    $(value).text(equipmentStatus["disk"][value.id]);
+                                } else if (value.id.indexOf("memory") >= 0) {
+                                    $(value).text(equipmentStatus["memory"][value.id]);
+                                } else if (value.id.indexOf("network") >= 0) {
+                                    $(value).text(equipmentStatus["network"][value.id]);
+                                } else if (value.id === "running_time") {
+                                    $(value).text(sec2DayHourMinSec(equipmentStatus[value.id]));
+                                } else if (value.id === "updated_at") {
+                                    $(value).text(timestamp2datetime(equipmentStatus[value.id] * 1000));
+                                } else {
+                                    $(value).text(equipmentStatus[value.id]);
+                                }
+                            })
+                        }
                     }
-
-                })
+                }
             };
             websocket.onerror = function (evt, e) {
                 console.log('Error occured: ' + evt.data);

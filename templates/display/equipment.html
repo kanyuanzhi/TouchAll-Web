@@ -62,7 +62,7 @@
             <td>运行时长</td>
             <td width="15%">CPU使用率</td>
             <td>CPU平均使用率</td>
-{{/*            <td>磁盘使用大小（GB）</td>*/}}
+            {{/*            <td>磁盘使用大小（GB）</td>*/}}
             <td>磁盘可用大小（GB）</td>
             <td>内存使用率</td>
             <td>内存可用大小（GB）</td>
@@ -74,11 +74,11 @@
         </tr>
         </thead>
         <tbody style="font-size:3px">
-        <tr class="status">
+        <tr id="{{.equipment.EquipmentID}}">
             <td id="running_time">--</td>
             <td id="cpu_per_utilization">--</td>
             <td id="cpu_average_utilization">--</td>
-{{/*            <td id="disk_used">--</td>*/}}
+            {{/*            <td id="disk_used">--</td>*/}}
             <td id="disk_available">--</td>
             <td id="memory_utilization">--</td>
             <td id="memory_available">--</td>
@@ -91,11 +91,15 @@
         </tbody>
     </table>
     <script type="text/javascript">
-        // let wsServer = "ws://127.0.0.1:9091/ws";
+        let wsServer = "ws://127.0.0.1:9091/ws";
         // let wsServer = "ws://10.211.55.10:9091/ws";
-        let wsServer = "ws://119.28.16.179:9091/ws";
+        // let wsServer = "ws://119.28.16.179:9091/ws";
         let websocket = new WebSocket(wsServer);
-        let requestMessage = JSON.stringify({"request_type": 31, "equipment_id": {{.equipment.EquipmentID}}})
+        {{/*let requestMessage = JSON.stringify({"request_type": 31, "equipment_id": {{.equipment.EquipmentID}}})*/}}
+        let requestMessage = JSON.stringify({
+            "request_type": 33, "equipment_ids": {{.equipment_ids}}
+        })
+
         websocket.onopen = function (evt) {
             websocket.send(requestMessage)
             console.log("Connected to WebSocket server.");
@@ -107,24 +111,38 @@
         // setInterval(function () {
         //    websocket.send("websocket i am client" + Math.floor(Math.random() * 10000))
         // }, 5000);
+        // websocket.onmessage = function (evt) {
+        //     console.log(JSON.parse(evt.data));
+        // };
         websocket.onmessage = function (evt) {
-            // console.log(JSON.parse(evt.data));
-            equipmentStatus = JSON.parse(evt.data)
-            $.each($(".status").children(), function (key, value){
-                if(value.id.indexOf("cpu")>=0){
-                    $(value).text(equipmentStatus["cpu"][value.id])
-                }else if(value.id.indexOf("disk")>=0){
-                    $(value).text(equipmentStatus["disk"][value.id])
-                }else if(value.id.indexOf("memory")>=0){
-                    $(value).text(equipmentStatus["memory"][value.id])
-                }else if(value.id.indexOf("network")>=0){
-                    $(value).text(equipmentStatus["network"][value.id])
-                }else if(value.id == "running_time"){
-                    $(value).text(sec2DayHourMinSec(equipmentStatus[value.id]))
-                }else {
-                    $(value).text(equipmentStatus[value.id])
+            let equipmentStatusStream = JSON.parse(evt.data);
+            if (equipmentStatusStream["data_type"] === 0) {
+                if (equipmentStatusStream["success"]) {
+                    console.log("webSocket连接成功");
                 }
-            })
+            } else {
+                let equipmentIDs = {{.equipment_ids}};
+                let equipmentStatus = equipmentStatusStream["status_stream"][equipmentIDs[0]];
+                if (equipmentStatus != undefined) {
+                    $.each($("#" + equipmentIDs[0]).children(), function (key, value) {
+                        if (value.id.indexOf("cpu") >= 0) {
+                            $(value).text(equipmentStatus["cpu"][value.id])
+                        } else if (value.id.indexOf("disk") >= 0) {
+                            $(value).text(equipmentStatus["disk"][value.id])
+                        } else if (value.id.indexOf("memory") >= 0) {
+                            $(value).text(equipmentStatus["memory"][value.id])
+                        } else if (value.id.indexOf("network") >= 0) {
+                            $(value).text(equipmentStatus["network"][value.id])
+                        } else if (value.id.indexOf("running_time") >= 0) {
+                            $(value).text(sec2DayHourMinSec(equipmentStatus[value.id]))
+                        } else {
+                            $(value).text(equipmentStatus[value.id])
+                        }
+                    })
+                } else {
+                    console.log("设备" + equipmentIDs[0] + "没有数据推送")
+                }
+            }
         };
         websocket.onerror = function (evt, e) {
             console.log('Error occured: ' + evt.data);
