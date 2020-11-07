@@ -25,8 +25,13 @@ func IsEquipmentIDExisted(id int) bool {
 
 func IsEquipmentNetworkMacExisted(mac1 string, mac2 string) bool {
 	var equipment models.Equipment
-	macs := []string{mac1, mac2}
-	result := db.Where("network_mac_1 IN ?", macs).Or("network_mac_2 IN ?", macs).First(&equipment)
+	var result *gorm.DB
+	if mac2 == "" {
+		result = db.Where("network_mac_1=?", mac1).Or("network_mac_2=?", mac1).First(&equipment)
+	} else {
+		macs := []string{mac1, mac2}
+		result = db.Where("network_mac_1 IN ?", macs).Or("network_mac_2 IN ?", macs).First(&equipment)
+	}
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return false
@@ -40,8 +45,10 @@ func IsEquipmentNetworkMacExisted(mac1 string, mac2 string) bool {
 
 func InsertEquipment(equipment models.Equipment) bool {
 	equipment.Authenticated = 1
-	result := db.Select("EquipmentID", "EquipmentType", "NetworkMac1", "NetworkMac2",
-		"NetworkCard1", "NetworkCard2", "Description", "Description", "Authenticated").Create(&equipment)
+	//result := db.Select("EquipmentID", "EquipmentType", "NetworkMac1", "NetworkMac2",
+	//	"NetworkCard1", "NetworkCard2", "Description", "Description", "Authenticated").Create(&equipment)
+	equipment.EquipmentType = 30
+	result := db.Omit("boot_time", "equipment_type_name", "equipment_group_name").Create(&equipment)
 	if result.Error != nil {
 		panic(result.Error.Error())
 		return false
@@ -126,4 +133,59 @@ func InsertEquipmentType(equipmentType models.EquipmentType) bool {
 		return false
 	}
 	return true
+}
+
+func FindEquipmentGroups() []models.EquipmentGroup {
+	var equipmentGroups []models.EquipmentGroup
+	result := db.Select("group_id", "group_name", "description").Find(&equipmentGroups)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil
+		} else {
+			panic(result.Error.Error())
+			return nil
+		}
+	}
+	return equipmentGroups
+}
+
+func IsEquipmentGroupExisted(id int, name string) bool {
+	var equipmentGroup models.EquipmentGroup
+	result := db.Select("id").Where("group_id=?", id).Or("group_name=?", name).First(&equipmentGroup)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return false
+		} else {
+			panic(result.Error.Error())
+			return false
+		}
+	}
+	return true
+}
+
+func InsertEquipmentGroup(equipmentGroup models.EquipmentGroup) bool {
+	result := db.Create(&equipmentGroup)
+	if result.Error != nil {
+		panic(result.Error.Error())
+		return false
+	}
+	return true
+}
+
+func GetEquipmentTypesMap() map[int]string {
+	equipmentTypes := FindEquipmentTypes()
+	equipmentTypesMap := make(map[int]string)
+	for _, equipmentType := range equipmentTypes {
+		equipmentTypesMap[equipmentType.TypeID] = equipmentType.TypeName
+	}
+	return equipmentTypesMap
+}
+
+func GetEquipmentGroupsMap() map[int]string {
+	equipmentGroups := FindEquipmentGroups()
+	equipmentGroupsMap := make(map[int]string)
+	for _, equipmentGroup := range equipmentGroups {
+		equipmentGroupsMap[equipmentGroup.GroupID] = equipmentGroup.GroupName
+	}
+	return equipmentGroupsMap
 }

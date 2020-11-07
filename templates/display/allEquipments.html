@@ -1,8 +1,5 @@
 {{ define "display/allEquipments.html" }}
     {{template "layout/header" .}}
-
-    <body>
-
     <table class="table table-striped">
         <thead style="font-size:3px">
         <tr>
@@ -23,18 +20,18 @@
         <tbody style="font-size:3px">
         {{range .equipments}}
             <tr id="{{.EquipmentID}}">
-                <td id="equipment_id">{{.EquipmentID}}</td>
-                <td id="running_time">--</td>
-                <td id="cpu_per_utilization">--</td>
-                <td id="cpu_average_utilization">--</td>
-                <td id="disk_available">--</td>
-                <td id="memory_utilization">--</td>
-                <td id="memory_available">--</td>
-                <td id="network_drop_in">--</td>
-                <td id="network_drop_out">--</td>
-                <td id="network_send_gigabytes">--</td>
-                <td id="network_receive_gigabytes">--</td>
-                <td id="updated_at">--</td>
+                <td class="equipment_id">{{.EquipmentID}}</td>
+                <td class="running_time">--</td>
+                <td class="cpu_per_utilization">--</td>
+                <td class="cpu_average_utilization">--</td>
+                <td class="disk_available">--</td>
+                <td class="memory_utilization">--</td>
+                <td class="memory_available">--</td>
+                <td class="network_drop_in">--</td>
+                <td class="network_drop_out">--</td>
+                <td class="network_send_gigabytes">--</td>
+                <td class="network_receive_gigabytes">--</td>
+                <td class="updated_at">--</td>
             </tr>
         {{end}}
         </tbody>
@@ -47,7 +44,8 @@
 
         function startWebsocket() {
             let websocket = new WebSocket(wsServer);
-            let requestMessage = JSON.stringify({"request_type": 33, "equipment_ids": {{.equipment_ids}}})
+            let requestMessage = JSON.stringify({"request_type": 33, "equipment_ids": {{.equipmentIDs}}})
+            // let requestMessage = JSON.stringify({"request_type": 33, "equipment_ids": [1,2,3,4,5,6,7,9879,76898,8706,3242,1231,54325,547]})
             websocket.onopen = function (evt) {
                 websocket.send(requestMessage)
                 console.log("Connected to WebSocket server.");
@@ -64,7 +62,7 @@
                         console.log("webSocket连接成功");
                     }
                 } else {
-                    let equipmentIDs = {{.equipment_ids}};
+                    let equipmentIDs = {{.equipmentIDs}};
                     for (let i = 0; i < equipmentIDs.length; i++) {
                         let equipmentStatus = equipmentStatusStream["status_stream"][equipmentIDs[i]];
                         if (equipmentStatus != undefined) {
@@ -72,22 +70,24 @@
                                 if (key === 0) {
                                     return
                                 }
-                                if (value.id.indexOf("cpu") >= 0) {
-                                    $(value).text(equipmentStatus["cpu"][value.id]);
-                                } else if (value.id.indexOf("disk") >= 0) {
-                                    $(value).text(equipmentStatus["disk"][value.id]);
-                                } else if (value.id.indexOf("memory") >= 0) {
-                                    $(value).text(equipmentStatus["memory"][value.id]);
-                                } else if (value.id.indexOf("network") >= 0) {
-                                    $(value).text(equipmentStatus["network"][value.id]);
-                                } else if (value.id === "running_time") {
-                                    $(value).text(sec2DayHourMinSec(equipmentStatus[value.id]));
-                                } else if (value.id === "updated_at") {
-                                    $(value).text(timestamp2datetime(equipmentStatus[value.id] * 1000));
+                                if (value.className.indexOf("cpu") >= 0) {
+                                    $(value).text(equipmentStatus["cpu"][value.className]);
+                                } else if (value.className.indexOf("disk") >= 0) {
+                                    $(value).text(equipmentStatus["disk"][value.className]);
+                                } else if (value.className.indexOf("memory") >= 0) {
+                                    $(value).text(equipmentStatus["memory"][value.className]);
+                                } else if (value.className.indexOf("network") >= 0) {
+                                    $(value).text(equipmentStatus["network"][value.className]);
+                                } else if (value.className === "running_time") {
+                                    $(value).text(sec2DayHourMinSec(equipmentStatus[value.className]));
+                                } else if (value.className === "updated_at") {
+                                    $(value).text(timestamp2datetime(equipmentStatus[value.className] * 1000));
                                 } else {
-                                    $(value).text(equipmentStatus[value.id]);
+                                    $(value).text(equipmentStatus[value.className]);
                                 }
                             })
+                        } else {
+                            console.log("设备" + equipmentIDs[i] + "没有数据推送")
                         }
                     }
                 }

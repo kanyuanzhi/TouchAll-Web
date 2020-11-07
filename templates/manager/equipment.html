@@ -1,12 +1,11 @@
 {{ define "manager/equipment.html" }}
     {{template "layout/header" .}}
-
-    <body>
-        <table class="table table-striped">
+     <table class="table table-striped">
             <thead style="font-size:3px">
             <tr>
                 <td>设备ID</td>
                 <td>类型</td>
+                <td>组</td>
                 <td>mac地址1</td>
                 <td>mac地址2</td>
                 <td>ip地址1</td>
@@ -35,7 +34,8 @@
             {{range .equipments}}
                 <tr>
                     <td><a href="/display/equipment?equipmentID={{.EquipmentID}}">{{.EquipmentID}}</a></td>
-                    <td>{{.EquipmentType}}</td>
+                    <td>{{.EquipmentTypeName}}</td>
+                    <td>{{.EquipmentGroupName}}</td>
                     <td>{{.NetworkMac1}}</td>
                     <td>{{.NetworkMac2}}</td>
                     <td>{{.NetworkIP1}}</td>

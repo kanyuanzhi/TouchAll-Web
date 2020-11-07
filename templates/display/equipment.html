@@ -1,12 +1,12 @@
 {{ define "display/equipment.html" }}
     {{template "layout/header" .}}
 
-    <body>
     <table class="table table-striped">
         <thead style="font-size:3px">
         <tr>
             <td>设备ID</td>
             <td>类型</td>
+            <td>组</td>
             <td>mac地址1</td>
             <td>mac地址2</td>
             <td>ip地址1</td>
@@ -31,7 +31,8 @@
         <tbody style="font-size:3px">
         <tr>
             <td>{{.equipment.EquipmentID}}</td>
-            <td>{{.equipment.EquipmentType}}</td>
+            <td>{{.equipment.EquipmentTypeName}}</td>
+            <td>{{.equipment.EquipmentGroupName}}</td>
             <td>{{.equipment.NetworkMac1}}</td>
             <td>{{.equipment.NetworkMac2}}</td>
             <td>{{.equipment.NetworkIP1}}</td>
@@ -97,7 +98,7 @@
         let websocket = new WebSocket(wsServer);
         {{/*let requestMessage = JSON.stringify({"request_type": 31, "equipment_id": {{.equipment.EquipmentID}}})*/}}
         let requestMessage = JSON.stringify({
-            "request_type": 33, "equipment_ids": {{.equipment_ids}}
+            "request_type": 33, "equipment_ids": {{.equipmentIDs}}
         })
 
         websocket.onopen = function (evt) {
@@ -121,7 +122,7 @@
                     console.log("webSocket连接成功");
                 }
             } else {
-                let equipmentIDs = {{.equipment_ids}};
+                let equipmentIDs = {{.equipmentIDs}};
                 let equipmentStatus = equipmentStatusStream["status_stream"][equipmentIDs[0]];
                 if (equipmentStatus != undefined) {
                     $.each($("#" + equipmentIDs[0]).children(), function (key, value) {

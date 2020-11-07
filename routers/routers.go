@@ -24,7 +24,9 @@ func (router *Router) Start() {
 	router.r.LoadHTMLGlob("templates/**/*")
 
 	router.r.GET("/index", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index/index.html", gin.H{})
+		c.HTML(http.StatusOK, "index/index.html", gin.H{
+			"title": "TouchALL主页",
+		})
 	})
 
 	// 注册路由组
