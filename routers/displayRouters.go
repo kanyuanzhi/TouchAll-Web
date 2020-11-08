@@ -3,6 +3,7 @@ package routers
 import (
 	"TouchAll-web/controllers"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func displayGroupStart(routerGroup *gin.RouterGroup) {
@@ -11,4 +12,10 @@ func displayGroupStart(routerGroup *gin.RouterGroup) {
 	routerGroup.GET("/equipment", controllers.SingleEquipmentDisplay)
 
 	routerGroup.GET("/allEquipments", controllers.AllEquipmentsDisplay)
+
+	routerGroup.GET("/dataCenter", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "display/dataCenterWsConnectionStatus.html", gin.H{
+			"title": "数据中心websocket连接状态",
+		})
+	})
 }

@@ -134,8 +134,10 @@
                             $(value).text(equipmentStatus["memory"][value.id])
                         } else if (value.id.indexOf("network") >= 0) {
                             $(value).text(equipmentStatus["network"][value.id])
-                        } else if (value.id.indexOf("running_time") >= 0) {
+                        } else if (value.id === "running_time") {
                             $(value).text(sec2DayHourMinSec(equipmentStatus[value.id]))
+                        } else if (value.id === "updated_at") {
+                            $(value).text(timestamp2datetime(equipmentStatus[value.id] * 1000))
                         } else {
                             $(value).text(equipmentStatus[value.id])
                         }

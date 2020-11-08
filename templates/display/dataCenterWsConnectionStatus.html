@@ -1,0 +1,66 @@
+{{ define "display/dataCenterWsConnectionStatus.html" }}
+    {{template "layout/header" .}}
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <td>总连接数</td>
+            <td>查看设备状态连接数</td>
+            <td>查看数据中心websocket连接状态的连接数</td>
+            <td>更新时间</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr id="dataCenterWsConnectionStatus">
+            <td id="all_connections">--</td>
+            <td id="equipment_status_connections">--</td>
+            <td id="ws_connection_status_connections">--</td>
+            <td id="updated_at">--</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <script type="text/javascript">
+        let wsServer = "ws://127.0.0.1:9091/ws";
+        // let wsServer = "ws://10.211.55.10:9091/ws";
+        // let wsServer = "ws://119.28.16.179:9091/ws";
+        let websocket = new WebSocket(wsServer);
+        {{/*let requestMessage = JSON.stringify({"request_type": 31, "equipment_id": {{.equipment.EquipmentID}}})*/}}
+        let requestMessage = JSON.stringify({
+            "request_type": 40
+        })
+
+        websocket.onopen = function (evt) {
+            websocket.send(requestMessage)
+            console.log("Connected to WebSocket server.");
+        };
+
+        websocket.onclose = function (evt) {
+            console.log("Disconnected");
+        };
+
+        websocket.onmessage = function (evt) {
+            let dataCenterWsConnectionStatusStream = JSON.parse(evt.data);
+            if (dataCenterWsConnectionStatusStream["data_type"] === 0) {
+                if (dataCenterWsConnectionStatusStream["success"]) {
+                    console.log("webSocket连接成功");
+                }
+            } else {
+                $.each($("#dataCenterWsConnectionStatus").children(), function (key, value) {
+                    if (value.id === "updated_at") {
+                        $(value).text(timestamp2datetime(dataCenterWsConnectionStatusStream[value.id]*1000))
+                    } else {
+                        $(value).text(dataCenterWsConnectionStatusStream[value.id])
+                    }
+                })
+
+            }
+        };
+
+        websocket.onerror = function (evt, e) {
+            console.log('Error occured: ' + evt.data);
+        };
+
+    </script>
+    </body>
+    </html>
+{{ end }}
