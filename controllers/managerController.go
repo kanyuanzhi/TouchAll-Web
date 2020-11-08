@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"TouchAll-web/utils"
+	"TouchAll-Web/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

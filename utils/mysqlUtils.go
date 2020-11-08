@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"TouchAll-web/dbDrivers"
-	"TouchAll-web/models"
+	"TouchAll-Web/dbDrivers"
+	"TouchAll-Web/models"
 	"errors"
 	"gorm.io/gorm"
 )

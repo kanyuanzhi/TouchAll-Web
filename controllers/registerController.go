@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"TouchAll-web/models"
-	"TouchAll-web/utils"
+	"TouchAll-Web/models"
+	"TouchAll-Web/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"strings"

@@ -1,7 +1,7 @@
 package dbDrivers
 
 import (
-	config2 "TouchAll-web/config"
+	config2 "TouchAll-Web/config"
 	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"

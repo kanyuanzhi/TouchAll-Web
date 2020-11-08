@@ -1,7 +1,7 @@
 package dbDrivers
 //
 //import (
-//	"TouchAll-web/utils"
+//	"TouchAll-Web/utils"
 //	"fmt"
 //	_ "github.com/go-sql-driver/mysql"
 //	"github.com/jmoiron/sqlx"

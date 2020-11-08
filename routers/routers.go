@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"TouchAll-web/config"
+	"TouchAll-Web/config"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

@@ -1,7 +1,7 @@
 package dbDrivers
 
 import (
-	"TouchAll-web/config"
+	"TouchAll-Web/config"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

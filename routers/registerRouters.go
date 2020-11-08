@@ -1,8 +1,8 @@
 package routers
 
 import (
-	"TouchAll-web/controllers"
-	"TouchAll-web/utils"
+	"TouchAll-Web/controllers"
+	"TouchAll-Web/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -14,7 +14,6 @@ func registerGroupStart(routerGroup *gin.RouterGroup) {
 	routerGroup.GET("/equipment", func(c *gin.Context) {
 		equipmentTypes := utils.FindEquipmentTypes()
 		equipmentGroups := utils.FindEquipmentGroups()
-
 		c.HTML(http.StatusOK, "register/equipment.html", gin.H{
 			"title":           "设备注册",
 			"equipmentTypes":  equipmentTypes,

@@ -1,4 +1,4 @@
-module TouchAll-web
+module TouchAll-Web
 
 go 1.15
 
