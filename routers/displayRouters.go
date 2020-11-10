@@ -18,4 +18,6 @@ func displayGroupStart(routerGroup *gin.RouterGroup) {
 			"title": "数据中心websocket连接状态",
 		})
 	})
+
+	routerGroup.GET("/camera", controllers.CameraDisplay)
 }

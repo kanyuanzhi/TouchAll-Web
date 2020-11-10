@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// response for "/register"
 func registerGroupStart(routerGroup *gin.RouterGroup) {
 	routerGroup.Static("/static", "./static")
 
@@ -20,7 +21,7 @@ func registerGroupStart(routerGroup *gin.RouterGroup) {
 			"equipmentGroups": equipmentGroups,
 		})
 	})
-	routerGroup.POST("/equipment/form", controllers.EquipmentRegister)
+	routerGroup.POST("/equipment", controllers.EquipmentRegister)
 
 	// 注册设备名称
 	routerGroup.GET("/equipmentType", func(c *gin.Context) {
@@ -28,7 +29,7 @@ func registerGroupStart(routerGroup *gin.RouterGroup) {
 			"title": "设备类型注册",
 		})
 	})
-	routerGroup.POST("/equipment/equipmentTypeForm", controllers.EquipmentTypeRegister)
+	routerGroup.POST("/equipmentType", controllers.EquipmentTypeRegister)
 
 	// 注册设备组
 	routerGroup.GET("/equipmentGroup", func(c *gin.Context) {
@@ -36,5 +37,13 @@ func registerGroupStart(routerGroup *gin.RouterGroup) {
 			"title": "设备组注册",
 		})
 	})
-	routerGroup.POST("/equipment/equipmentGroupForm", controllers.EquipmentGroupRegister)
+	routerGroup.POST("/equipmentGroup", controllers.EquipmentGroupRegister)
+
+	// 注册监控摄像机
+	routerGroup.GET("/camera", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "register/camera.html", gin.H{
+			"title": "设备组注册",
+		})
+	})
+	routerGroup.POST("/camera", controllers.CameraRegister)
 }

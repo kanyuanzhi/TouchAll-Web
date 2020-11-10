@@ -7,7 +7,8 @@ import (
 
 type Equipment struct {
 	gorm.Model
-	EquipmentID    int    `form:"equipment_id" gorm:"primaryKey;autoIncrement:false"`
+	DataType       int
+	EquipmentID    int    `form:"equipment_id" gorm:"index"`
 	EquipmentType  int    `form:"equipment_type"`
 	EquipmentGroup int    `form:"equipment_group"`
 	NetworkMac1    string `form:"network_mac_1" gorm:"column:network_mac_1"`
@@ -41,14 +42,14 @@ type Equipment struct {
 
 type EquipmentType struct {
 	gorm.Model
-	TypeID      int    `form:"type_id" gorm:"primaryKey;autoIncrement:false"`
+	TypeID      int    `form:"type_id" gorm:"index"`
 	TypeName    string `form:"type_name"`
 	Description string `form:"description"`
 }
 
 type EquipmentGroup struct {
 	gorm.Model
-	GroupID     int    `form:"group_id" gorm:"primaryKey;autoIncrement:false"`
+	GroupID     int    `form:"group_id" gorm:"index"`
 	GroupName   string `form:"group_name"`
 	Description string `form:"description"`
 }

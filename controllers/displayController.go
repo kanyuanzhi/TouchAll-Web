@@ -38,3 +38,16 @@ func AllEquipmentsDisplay(c *gin.Context) {
 		"equipmentIDs": equipmentIDs,
 	})
 }
+
+func CameraDisplay(c *gin.Context) {
+	cameras := utils.FindAllCameras()
+	if cameras == nil {
+		c.HTML(http.StatusOK, "display/camera.html", gin.H{
+			"title": "监控页面",
+		})
+	}
+	c.HTML(http.StatusOK, "display/camera.html", gin.H{
+		"title":   "监控页面",
+		"cameras": cameras,
+	})
+}

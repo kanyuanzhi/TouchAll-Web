@@ -1,19 +1,23 @@
-{{ define "register/equipmentGroup.html" }}
+{{ define "register/camera.html" }}
     {{template "layout/header" .}}
     <div class="container-md">
         <div class="col-md-3"></div>
         <div class="col-md-6">
-            <form id="equipmentGroupRegistrationForm">
+            <form id="cameraRegistrationForm">
                 <div class="form-group">
-                    <label for="group_id">设备组ID</label>
-                    <input type="number" class="form-control" id="group_id" name="group_id">
+                    <label for="camera_id">监控摄像机ID</label>
+                    <input type="number" class="form-control" id="camera_id" name="camera_id">
                 </div>
                 <div class="form-group">
-                    <label for="group_name">设备组名称</label>
-                    <input type="text" class="form-control" id="group_name" name="group_name">
+                    <label for="camera_name">监控摄像机名称</label>
+                    <input type="text" class="form-control" id="camera_name" name="camera_name">
                 </div>
                 <div class="form-group">
-                    <label for="description">设备组描述</label>
+                    <label for="camera_host">监控摄像机地址</label>
+                    <input type="text" class="form-control" id="camera_host" name="camera_host">
+                </div>
+                <div class="form-group">
+                    <label for="description">监控摄像机描述</label>
                     <input type="text" class="form-control" id="description" name="description">
                 </div>
                 <button type="button" class="btn btn-primary" id="button" onclick="send();">Submit</button>
@@ -25,8 +29,8 @@
         function send() {
             $.ajax({
                 type: "post",
-                url: "/register/equipmentGroup",
-                data: $("#equipmentGroupRegistrationForm").serialize(),
+                url: "/register/camera",
+                data: $("#cameraRegistrationForm").serialize(),
                 success: function (res) {
                     alert(res.message)
                 },

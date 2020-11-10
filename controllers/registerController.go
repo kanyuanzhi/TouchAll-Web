@@ -90,3 +90,33 @@ func EquipmentGroupRegister(c *gin.Context) {
 		"message": message,
 	})
 }
+
+func CameraRegister(c *gin.Context) {
+	var camera models.Camera
+	c.ShouldBindWith(&camera, binding.Form)
+	camera.CameraName = strings.Replace(camera.CameraName, " ", "", -1) // 去掉空格
+	camera.CameraHost = strings.Replace(camera.CameraHost, " ", "", -1)
+	if camera.CameraID == 0 {
+		success = false
+		message = "监控摄像机ID不能为空或0！"
+	} else if camera.CameraName == "" {
+		success = false
+		message = "监控摄像机名称不能为空！"
+	} else if camera.CameraHost == "" {
+		success = false
+		message = "监控摄像机地址不能为空！"
+	} else if utils.IsCameraExisted(camera.CameraID, camera.CameraName) {
+		success = false
+		message = "该监控摄像机编号或名称已注册，请转至监控摄像机管理页面查看！"
+	} else if utils.InsertCamera(camera) {
+		success = true
+		message = "监控摄像机注册成功！"
+	} else {
+		success = false
+		message = "监控摄像机注册失败！"
+	}
+	c.JSON(200, gin.H{
+		"success": success,
+		"message": message,
+	})
+}

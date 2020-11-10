@@ -45,9 +45,7 @@ func IsEquipmentNetworkMacExisted(mac1 string, mac2 string) bool {
 
 func InsertEquipment(equipment models.Equipment) bool {
 	equipment.Authenticated = 1
-	//result := db.Select("EquipmentID", "EquipmentType", "NetworkMac1", "NetworkMac2",
-	//	"NetworkCard1", "NetworkCard2", "Description", "Description", "Authenticated").Create(&equipment)
-	equipment.EquipmentType = 30
+	equipment.DataType = 30
 	result := db.Omit("boot_time", "equipment_type_name", "equipment_group_name").Create(&equipment)
 	if result.Error != nil {
 		panic(result.Error.Error())
@@ -188,4 +186,43 @@ func GetEquipmentGroupsMap() map[int]string {
 		equipmentGroupsMap[equipmentGroup.GroupID] = equipmentGroup.GroupName
 	}
 	return equipmentGroupsMap
+}
+
+func IsCameraExisted(id int, name string) bool {
+	var camera models.Camera
+	result := db.Select("id").Where("camera_id=?", id).Or("camera_name=?", name).First(&camera)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return false
+		} else {
+			panic(result.Error.Error())
+			return false
+		}
+	}
+	return true
+}
+
+func InsertCamera(camera models.Camera) bool {
+	camera.Authenticated = 1
+	camera.DataType = 50
+	result := db.Create(&camera)
+	if result.Error != nil {
+		panic(result.Error.Error())
+		return false
+	}
+	return true
+}
+
+func FindAllCameras() []models.Camera {
+	var cameras []models.Camera
+	result := db.Find(&cameras)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil
+		} else {
+			panic(result.Error.Error())
+			return nil
+		}
+	}
+	return cameras
 }

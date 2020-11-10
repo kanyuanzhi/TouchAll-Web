@@ -16,7 +16,9 @@ func EquipmentManager(c *gin.Context) {
 	}
 
 	if equipments == nil {
-		c.HTML(http.StatusOK, "manager/equipment.html", gin.H{})
+		c.HTML(http.StatusOK, "manager/equipment.html", gin.H{
+			"title": "设备管理",
+		})
 	} else {
 		c.HTML(http.StatusOK, "manager/equipment.html", gin.H{
 			"title":      "设备管理",

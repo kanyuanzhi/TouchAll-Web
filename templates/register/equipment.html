@@ -55,7 +55,7 @@
         function send() {
             $.ajax({
                 type: "post",
-                url: "/register/equipment/form",
+                url: "/register/equipment",
                 data: $("#equipmentRegisteredForm").serialize(),
                 success: function (res) {
                     alert(res.message)
