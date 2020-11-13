@@ -51,3 +51,16 @@ func CameraDisplay(c *gin.Context) {
 		"cameras": cameras,
 	})
 }
+
+func AICameraDisplay(c *gin.Context) {
+	aiCameras := utils.FindAllAICameras()
+	if aiCameras == nil {
+		c.HTML(http.StatusOK, "display/aiCamera.html", gin.H{
+			"title": "智能监控页面",
+		})
+	}
+	c.HTML(http.StatusOK, "display/aiCamera.html", gin.H{
+		"title":     "智能监控页面",
+		"aiCameras": aiCameras,
+	})
+}

@@ -42,7 +42,7 @@ func registerGroupStart(routerGroup *gin.RouterGroup) {
 	// 注册监控摄像机
 	routerGroup.GET("/camera", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "register/camera.html", gin.H{
-			"title": "设备组注册",
+			"title": "监控摄像机注册",
 		})
 	})
 	routerGroup.POST("/camera", controllers.CameraRegister)

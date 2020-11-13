@@ -1,0 +1,148 @@
+{{ define "display/aiCamera.html" }}
+    {{template "layout/header" .}}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <ul class="list-group" id="cameras">
+                    {{range .aiCameras}}
+                        <a href="#" class="list-group-item list-group-item-action" id="{{.CameraID}}">{{.CameraName}}
+                            &nbsp;{{.CameraHost}}</a>
+                    {{end}}
+                </ul>
+            </div>
+
+            <div class="col-md-6">
+                <div><img src="" id="img" alt="" width="800" height="500"></div>
+                <div>
+                    <table class="table" id="people">
+                        <thead>
+                        <tr>
+                            <td width="15%">姓名</td>
+                            <td width="15%">出现图像位置</td>
+                            <td width="55%">时间</td>
+                            <td width="15%">总人数</td>
+                        </tr>
+
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-1">
+
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        let cameraWsServer = "ws://127.0.0.1:9081/ws";
+        let cameraWebsocket;
+        let previousCameraID = 0;
+        initCameraWebsocket()
+
+        function initCameraWebsocket() {
+            cameraWebsocket = new WebSocket(cameraWsServer);
+
+            cameraWebsocket.onclose = function (evt) {
+                console.log("Disconnected");
+            };
+
+            cameraWebsocket.onmessage = function (evt) {
+                let msg = evt.data
+                blobToDataUrl(msg, function (result) {
+                    $("#img").attr("src", result)
+                })
+            };
+            cameraWebsocket.onerror = function (evt, e) {
+                console.log('Error occured: ' + evt.data);
+            };
+        }
+
+
+        let peopleWsServer = "ws://127.0.0.1:9091/ws";
+        let peopleWebsocket = new WebSocket(peopleWsServer);
+        initPeopleWebsocket()
+        // websocket.onopen = function (evt) {
+        //     websocket.send(requestMessage)
+        //     console.log("Connected to WebSocket server.");
+        // };
+        function initPeopleWebsocket() {
+
+            peopleWebsocket.onclose = function (evt) {
+                console.log("Disconnected");
+            };
+
+            peopleWebsocket.onmessage = function (evt) {
+                let people = JSON.parse(evt.data);
+
+                if (people["data_type"] === 10) {
+                    let personAwarenessData = people["person_awareness_data"]
+                    console.log(personAwarenessData)
+                    let peopleNumbers = personAwarenessData.length
+                    if (peopleNumbers != 0) {
+                        let htmlStr = ""
+                        for (let i = 0; i < peopleNumbers; ++i) {
+                            htmlStr += "<tr><td>" + personAwarenessData[i]["name"] + "</td>" +
+                                "<td>" + personAwarenessData[i]["boarder_in_frame"] + "</td>" +
+                                "<td>" + timestamp2datetime(personAwarenessData[i]["updated_at"] * 1000) + "</td>" +
+                                "<td>" + peopleNumbers + "</td></tr>"
+                        }
+                        $("table#people tbody").html(htmlStr)
+                    }
+                }
+
+
+            };
+            peopleWebsocket.onerror = function (evt, e) {
+                console.log('Error occured: ' + evt.data);
+            };
+        }
+
+        function blobToDataUrl(blob, callback) {
+            let reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onload = function (e) {
+                callback(e.target.result);
+            }
+        }
+
+        $("#cameras").click(function (e) {
+            if (cameraWebsocket.readyState === 3) {
+                previousCameraID = 0;
+                initCameraWebsocket();
+                initPeopleWebsocket();
+            }
+            $(e.target).addClass("list-group-item-primary");
+            $(e.target).siblings().each(function () {
+                $(this).removeClass("list-group-item-primary");
+            })
+            let cameraID = parseInt(e.target.id);
+
+            let requestCameraMessage = JSON.stringify({
+                "request_type": 53,
+                "camera_id": cameraID,
+                "previous_camera_id": previousCameraID
+            })
+            cameraWebsocket.send(requestCameraMessage);
+            $("#img").attr("src", "");
+
+            let requestPeopleMessage = JSON.stringify({
+                "request_type": 10,
+                "camera_id": 1,
+                "previous_camera_id": previousCameraID
+            })
+            previousCameraID = cameraID;
+            peopleWebsocket.send(requestPeopleMessage);
+
+            console.log(requestCameraMessage);
+        })
+    </script>
+    </body>
+    </html>
+{{ end }}
+
+
+</body>
+</html>

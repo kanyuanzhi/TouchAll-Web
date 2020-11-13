@@ -93,9 +93,14 @@ func EquipmentGroupRegister(c *gin.Context) {
 
 func CameraRegister(c *gin.Context) {
 	var camera models.Camera
+	var aiCamera models.AICamera
 	c.ShouldBindWith(&camera, binding.Form)
+	c.ShouldBindWith(&aiCamera, binding.Form)
 	camera.CameraName = strings.Replace(camera.CameraName, " ", "", -1) // 去掉空格
 	camera.CameraHost = strings.Replace(camera.CameraHost, " ", "", -1)
+	aiCamera.CameraName = strings.Replace(aiCamera.CameraName, " ", "", -1) // 去掉空格
+	aiCamera.CameraHost = strings.Replace(aiCamera.CameraHost, " ", "", -1)
+
 	if camera.CameraID == 0 {
 		success = false
 		message = "监控摄像机ID不能为空或0！"
@@ -105,10 +110,10 @@ func CameraRegister(c *gin.Context) {
 	} else if camera.CameraHost == "" {
 		success = false
 		message = "监控摄像机地址不能为空！"
-	} else if utils.IsCameraExisted(camera.CameraID, camera.CameraName) {
+	} else if utils.IsCameraExisted(camera.CameraID, camera.CameraName) && utils.IsAICameraExisted(aiCamera.CameraID, aiCamera.CameraName) {
 		success = false
 		message = "该监控摄像机编号或名称已注册，请转至监控摄像机管理页面查看！"
-	} else if utils.InsertCamera(camera) {
+	} else if utils.InsertCamera(camera) && utils.InsertAICamera(aiCamera) {
 		success = true
 		message = "监控摄像机注册成功！"
 	} else {

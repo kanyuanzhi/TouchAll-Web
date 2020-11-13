@@ -226,3 +226,42 @@ func FindAllCameras() []models.Camera {
 	}
 	return cameras
 }
+
+func IsAICameraExisted(id int, name string) bool {
+	var aiCamera models.AICamera
+	result := db.Select("id").Where("camera_id=?", id).Or("camera_name=?", name).First(&aiCamera)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return false
+		} else {
+			panic(result.Error.Error())
+			return false
+		}
+	}
+	return true
+}
+
+func InsertAICamera(aiCamera models.AICamera) bool {
+	aiCamera.Authenticated = 1
+	aiCamera.DataType = 50
+	result := db.Create(&aiCamera)
+	if result.Error != nil {
+		panic(result.Error.Error())
+		return false
+	}
+	return true
+}
+
+func FindAllAICameras() []models.AICamera {
+	var aiCameras []models.AICamera
+	result := db.Find(&aiCameras)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil
+		} else {
+			panic(result.Error.Error())
+			return nil
+		}
+	}
+	return aiCameras
+}

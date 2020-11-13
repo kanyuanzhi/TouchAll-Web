@@ -1,8 +1,11 @@
 {{ define "register/camera.html" }}
     {{template "layout/header" .}}
-    <div class="container-md">
+    <div class="container-fluid">
         <div class="col-md-3"></div>
         <div class="col-md-6">
+            <div class="alert alert-success" role="alert">
+                此页面会同时注册普通监控摄像机与智能监控摄像机。
+            </div>
             <form id="cameraRegistrationForm">
                 <div class="form-group">
                     <label for="camera_id">监控摄像机ID</label>
