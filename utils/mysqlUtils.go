@@ -265,3 +265,55 @@ func FindAllAICameras() []models.AICamera {
 	}
 	return aiCameras
 }
+
+func FindSensorByID(id int) (models.Sensor, bool) {
+	var sensor models.Sensor
+	result := db.Where("sensor_id=?", id).First(&sensor)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return sensor, false
+		} else {
+			panic(result.Error.Error())
+			return sensor, false
+		}
+	}
+	return sensor, true
+}
+
+func IsSensorExisted(id int) bool {
+	var sensor models.Sensor
+	result := db.Select("id").Where("sensor_id=?", id).First(&sensor)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return false
+		} else {
+			panic(result.Error.Error())
+			return false
+		}
+	}
+	return true
+}
+
+func InsertSensor(sensor models.Sensor) bool {
+	sensor.DataType = 20
+	result := db.Create(&sensor)
+	if result.Error != nil {
+		panic(result.Error.Error())
+		return false
+	}
+	return true
+}
+
+func FindAllSensors() []models.Sensor {
+	var sensors []models.Sensor
+	result := db.Find(&sensors)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil
+		} else {
+			panic(result.Error.Error())
+			return nil
+		}
+	}
+	return sensors
+}

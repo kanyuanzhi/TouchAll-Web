@@ -64,3 +64,30 @@ func AICameraDisplay(c *gin.Context) {
 		"aiCameras": aiCameras,
 	})
 }
+
+func SingleSensorDisplay(c *gin.Context) {
+	sensorIDStr := c.DefaultQuery("sensorID", "0")
+	sensorID, _ := strconv.Atoi(sensorIDStr)
+	if sensor, has := utils.FindSensorByID(sensorID); has {
+		c.HTML(http.StatusOK, "display/sensor.html", gin.H{
+			"title":     "单个环境监测展示",
+			"sensor":    sensor,
+			"sensorIDs": []int{sensorID},
+		})
+	} else {
+		c.String(http.StatusOK, "没有id为%d的设备，请确认设备ID！", sensorID)
+	}
+}
+
+func AllSensorsDisplay(c *gin.Context) {
+	sensors := utils.FindAllSensors()
+	sensorIDs := make([]int, 0)
+	for _, sensor := range sensors {
+		sensorIDs = append(sensorIDs, sensor.SensorID)
+	}
+	c.HTML(http.StatusOK, "display/allSensors.html", gin.H{
+		"title":     "环境监测页面",
+		"sensors":   sensors,
+		"sensorIDs": sensorIDs,
+	})
+}

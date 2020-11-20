@@ -46,4 +46,12 @@ func registerGroupStart(routerGroup *gin.RouterGroup) {
 		})
 	})
 	routerGroup.POST("/camera", controllers.CameraRegister)
+
+	// 注册监控摄像机
+	routerGroup.GET("/sensor", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "register/sensor.html", gin.H{
+			"title": "传感器注册",
+		})
+	})
+	routerGroup.POST("/sensor", controllers.SensorRegister)
 }

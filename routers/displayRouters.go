@@ -21,4 +21,8 @@ func displayGroupStart(routerGroup *gin.RouterGroup) {
 
 	routerGroup.GET("/camera", controllers.CameraDisplay)
 	routerGroup.GET("/aiCamera", controllers.AICameraDisplay)
+
+	routerGroup.GET("/sensor", controllers.SingleSensorDisplay)
+	routerGroup.GET("/allSensors", controllers.AllSensorsDisplay)
+
 }

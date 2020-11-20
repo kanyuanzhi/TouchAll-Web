@@ -1,0 +1,28 @@
+{{ define "manager/sensor.html" }}
+    {{template "layout/header" .}}
+     <table class="table table-striped">
+            <thead style="font-size:3px">
+            <tr>
+                <td>传感器ID</td>
+                <td>传感器位置</td>
+                <td>注册时间</td>
+                <td>更新时间</td>
+            </tr>
+            </thead>
+            <tbody style="font-size:3px">
+            {{range .sensors}}
+                <tr>
+                    <td><a href="/display/sensor?sensorID={{.SensorID}}">{{.SensorID}}</a></td>
+                    <td>{{.SensorLocation}}</td>
+                    <td>{{.CreatedAt}}</td>
+                    <td>{{.UpdatedAt}}</td>
+                </tr>
+            {{end}}
+            </tbody>
+        </table>
+    <script>
+
+    </script>
+    </body>
+    </html>
+{{ end }}

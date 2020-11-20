@@ -9,4 +9,5 @@ func managerGroupStart(routerGroup *gin.RouterGroup) {
 	routerGroup.Static("/static", "./static")
 
 	routerGroup.GET("/equipment", controllers.EquipmentManager)
+	routerGroup.GET("/sensor", controllers.SensorManager)
 }

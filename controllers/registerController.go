@@ -125,3 +125,30 @@ func CameraRegister(c *gin.Context) {
 		"message": message,
 	})
 }
+
+func SensorRegister(c *gin.Context) {
+	var sensor models.Sensor
+	c.ShouldBindWith(&sensor, binding.Form)
+	sensor.SensorLocation = strings.Replace(sensor.SensorLocation, " ", "", -1) // 去掉空格
+
+	if sensor.SensorID == 0 {
+		success = false
+		message = "传感器ID不能为空或0！"
+	} else if sensor.SensorLocation == "" {
+		success = false
+		message = "传感器位置不能为空！"
+	} else if utils.IsSensorExisted(sensor.SensorID) {
+		success = false
+		message = "该传感器ID已注册，请转至传感器管理页面查看！"
+	} else if utils.InsertSensor(sensor) {
+		success = true
+		message = "传感器I注册成功！"
+	} else {
+		success = false
+		message = "传感器I注册失败！"
+	}
+	c.JSON(200, gin.H{
+		"success": success,
+		"message": message,
+	})
+}

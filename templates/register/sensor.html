@@ -1,0 +1,37 @@
+{{ define "register/sensor.html" }}
+    {{template "layout/header" .}}
+    <div class="container-fluid">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <form id="sensorRegistrationForm">
+                <div class="form-group">
+                    <label for="sensor_id">传感器ID</label>
+                    <input type="number" class="form-control" id="sensor_id" name="sensor_id">
+                </div>
+                <div class="form-group">
+                    <label for="sensor_location">传感器位置</label>
+                    <input type="text" class="form-control" id="sensor_location" name="sensor_location">
+                </div>
+                <button type="button" class="btn btn-primary" id="button" onclick="send();">Submit</button>
+            </form>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+    <script>
+        function send() {
+            $.ajax({
+                type: "post",
+                url: "/register/sensor",
+                data: $("#sensorRegistrationForm").serialize(),
+                success: function (res) {
+                    alert(res.message)
+                },
+                error: function (err) {
+                    alert(err)
+                }
+            })
+        }
+    </script>
+    </body>
+    </html>
+{{ end }}

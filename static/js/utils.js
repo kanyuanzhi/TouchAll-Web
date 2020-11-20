@@ -26,7 +26,22 @@ function sec2DayHourMinSec(value) {
     return result;
 }
 
-function timestamp2datetime(value){
+function timestamp2datetime(value) {
     let result = new Date(value);
-    return result
+    let year = result.getFullYear()
+    let month = result.getMonth()
+    let day = result.getDay()
+    let hour = result.getHours()
+    let minute = result.getMinutes()
+    let second = result.getSeconds()
+    let resultStr = year + "-" + formatNumber(month) + "-" + formatNumber(day) + " " + formatNumber(hour) + ":" + formatNumber(minute) + ":" + formatNumber(second)
+    return resultStr
+}
+
+function formatNumber(number) {
+    if (number < 10) {
+        return "0" + number
+    } else {
+        return number
+    }
 }

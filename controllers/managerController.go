@@ -26,3 +26,17 @@ func EquipmentManager(c *gin.Context) {
 		})
 	}
 }
+
+func SensorManager(c *gin.Context) {
+	sensors := utils.FindAllSensors()
+	if sensors == nil {
+		c.HTML(http.StatusOK, "manager/sensor.html", gin.H{
+			"title": "传感器管理",
+		})
+	} else {
+		c.HTML(http.StatusOK, "manager/sensor.html", gin.H{
+			"title":   "传感器管理",
+			"sensors": sensors,
+		})
+	}
+}

@@ -1,0 +1,82 @@
+{{ define "display/sensor.html" }}
+    {{template "layout/header" .}}
+
+    <table class="table table-striped">
+        <thead style="font-size:3px">
+        <tr>
+            <td>传感器ID</td>
+            <td>传感器位置</td>
+        </tr>
+        </thead>
+        <tbody style="font-size:3px">
+        <tr>
+            <td>{{.sensor.SensorID}}</td>
+            <td>{{.sensor.SensorLocation}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-striped">
+        <thead style="font-size:3px">
+        <tr>
+            <td>温度(℃)</td>
+            <td>湿度(%)</td>
+            <td>数据更新时间</td>
+        </tr>
+        </thead>
+        <tbody style="font-size:3px">
+        <tr id="{{.sensor.SensorID}}">
+            <td id="temperature">--</td>
+            <td id="humidity">--</td>
+            <td id="updated_at">--</td>
+        </tr>
+        </tbody>
+    </table>
+    <script type="text/javascript">
+        let wsServer = "ws://127.0.0.1:9091/ws";
+        // let wsServer = "ws://10.211.55.10:9091/ws";
+        // let wsServer = "ws://119.28.16.179:9091/ws";
+        let websocket = new WebSocket(wsServer);
+        let requestMessage = JSON.stringify({
+            "request_type": 20, "sensor_ids": {{.sensorIDs}}
+        })
+
+        websocket.onopen = function (evt) {
+            websocket.send(requestMessage)
+            console.log("Connected to WebSocket server.");
+        };
+
+        websocket.onclose = function (evt) {
+            console.log("Disconnected");
+        };
+
+        websocket.onmessage = function (evt) {
+            let environmentStream = JSON.parse(evt.data);
+            if (environmentStream["data_type"] === 0) {
+                if (environmentStream["success"]) {
+                    console.log("webSocket连接成功");
+                }
+            } else {
+                let sensorIDs = {{.sensorIDs}};
+                let environment = environmentStream["environment"][sensorIDs[0]];
+                if (environment != undefined) {
+                    $.each($("#" + sensorIDs[0]).children(), function (key, value) {
+                        if (value.id === "updated_at") {
+                            $(value).text(timestamp2datetime(environment[value.id] * 1000))
+                        } else {
+                            $(value).text(environment[value.id])
+                        }
+                    })
+                } else {
+                    console.log("传感器" + sensorIDs[0] + "没有数据推送")
+                }
+            }
+        };
+        websocket.onerror = function (evt, e) {
+            console.log('Error occurs: ' + evt.data);
+        };
+
+    </script>
+    </body>
+    </html>
+{{ end }}
